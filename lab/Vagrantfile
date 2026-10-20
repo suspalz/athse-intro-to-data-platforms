@@ -1,0 +1,38 @@
+# Local stand-in for the team-17 course environment:
+# four Ubuntu 24.04 VMs with the same names and internal addresses.
+NODES = [
+  { name: "team-17-en", ip: "10.17.0.10", memory: 1024, cpus: 1, role: "edge"  },
+  { name: "team-17-nn", ip: "10.17.0.11", memory: 2048, cpus: 2, role: "inner" },
+  { name: "team-17-00", ip: "10.17.0.12", memory: 1280, cpus: 1, role: "inner" },
+  { name: "team-17-01", ip: "10.17.0.13", memory: 1280, cpus: 1, role: "inner" },
+]
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-24.04"
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+  # Hostname and /etc/hosts are set by provision.sh so that they look like the
+  # course VMs; with this switch off Vagrant leaves both alone.
+  config.vm.allow_hosts_modification = false
+  config.vm.boot_timeout = 900
+
+  NODES.each do |n|
+    config.vm.define n[:name] do |node|
+      node.vm.hostname = n[:name]
+      node.vm.network "private_network", ip: n[:ip]
+
+      node.vm.provider "virtualbox" do |vb|
+        vb.name = n[:name]
+        vb.memory = n[:memory]
+        vb.cpus = n[:cpus]
+        vb.linked_clone = true
+      end
+
+      node.vm.provision "file", source: "keys/user_key.pub", destination: "/tmp/lab/user_key.pub"
+      node.vm.provision "file", source: "keys/team_internal.pub", destination: "/tmp/lab/team_internal.pub"
+      if n[:role] == "edge"
+        node.vm.provision "file", source: "keys/team_internal", destination: "/tmp/lab/team_internal"
+      end
+      node.vm.provision "shell", path: "provision.sh", args: [n[:role], n[:name]]
+    end
+  end
+end
