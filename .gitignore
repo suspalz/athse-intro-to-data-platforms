@@ -1,3 +1,4 @@
-lab/keys/
-lab/.vagrant/
+# ключи и служебные файлы локальных стендов (hw1/lab, hw2/lab, ...) в git не кладем
+**/lab/keys/
+**/.vagrant/
 *.log

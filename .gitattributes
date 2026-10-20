@@ -1,0 +1,3 @@
+# скрипты запускаются на linux: всегда LF, даже если git на windows с autocrlf
+*.sh text eol=lf
+Vagrantfile text eol=lf
