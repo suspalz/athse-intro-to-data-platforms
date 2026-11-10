@@ -3,3 +3,4 @@
 | ДЗ | Что | Папка |
 |---|---|---|
 | 1 | развертывание HDFS: NameNode, SecondaryNameNode и 3 DataNode | [`hw1/`](hw1/) |
+| 2 | развертывание YARN и HistoryServer, доступ к веб-интерфейсам кластера через SSH-туннель | [`hw2/`](hw2/) |
